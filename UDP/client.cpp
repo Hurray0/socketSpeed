@@ -12,7 +12,7 @@
    
 using namespace std;
   
-#define DEST_PORT 8000   
+#define DEST_PORT 39406   
 //#define DSET_IP_ADDRESS  "127.0.0.1"   
 #define BUF_SIZE 65000
 //#define REPEAT_N 1

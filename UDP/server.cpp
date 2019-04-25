@@ -9,7 +9,7 @@
 #include <time.h>
 #include <iostream>
 
-#define SERV_PORT   8000   
+#define SERV_PORT   39406   
 #define BUF_SIZE 65000
 
 using namespace std;
