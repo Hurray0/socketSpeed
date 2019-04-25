@@ -14,8 +14,13 @@
 
 int main(int argc , char *argv[])
 {
+    // parameters
+    struct timespec tn, tn2;
+    int REPEAT_N = atoi(argv[2]);
+    int REPEAT_M = atoi(argv[3]);
+    float SLEEP = atof(argv[4]);
 
-    //socket的建立
+    // socket setup
     int sockfd = 0;
     sockfd = socket(AF_INET , SOCK_STREAM , 0);
 
@@ -23,15 +28,13 @@ int main(int argc , char *argv[])
         printf("Fail to create a socket.");
     }
 
-    //socket的連線
-
+    // socket connection
     struct sockaddr_in info;
     bzero(&info,sizeof(info));
     info.sin_family = PF_INET;
 
-    //localhost test
-    info.sin_addr.s_addr = inet_addr(argv[1]);
-    info.sin_port = htons(SERV_PORT);
+    info.sin_addr.s_addr = inet_addr(argv[1]); // server ip
+    info.sin_port = htons(SERV_PORT); // server port
 
 
     int err = connect(sockfd,(struct sockaddr *)&info,sizeof(info));
@@ -39,14 +42,25 @@ int main(int argc , char *argv[])
         printf("Connection error");
     }
 
+    // Send a message to server
+    //char send_buf[] = {"Hi there"};
+    //char receiveMessage[100] = {};
+    char *send_buf;
+    send_buf = (char *)malloc(BUF_SIZE*sizeof(char));
+    for (int j = 0; j < REPEAT_M; j++) {
+	    clock_gettime(CLOCK_REALTIME, &tn);
+	    for (int i = 0; i < REPEAT_N; i++) {
+		    send(sockfd, send_buf,sizeof(send_buf),0);
+	    }
+	    clock_gettime(CLOCK_REALTIME, &tn2);
+	    double start_time = tn.tv_sec * 1000000000 + tn.tv_nsec;
+	    double end_time = tn2.tv_sec * 1000000000 + tn2.tv_nsec;
+	    double diff = end_time - start_time;
+	    double throughput = REPEAT_N*BUF_SIZE*sizeof(char)/diff*8/1.024/1.024/1.024;
+	    printf("time = %lfns, throughput = %lfGbps\n", diff, throughput);
+    }
+    //recv(sockfd,receiveMessage,sizeof(receiveMessage),0);
 
-    //Send a message to server
-    char message[] = {"Hi there"};
-    char receiveMessage[100] = {};
-    send(sockfd,message,sizeof(message),0);
-    recv(sockfd,receiveMessage,sizeof(receiveMessage),0);
-
-    printf("%s",receiveMessage);
     printf("close Socket\n");
     close(sockfd);
     return 0;
