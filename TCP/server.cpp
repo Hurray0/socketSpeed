@@ -57,7 +57,8 @@ int main(int argc , char *argv[])
 				N ++;
 				clock_gettime(CLOCK_REALTIME, &tn2);
 				double diff = tn2.tv_sec * 1000000000 + tn2.tv_nsec - (tn.tv_sec * 1000000000 + tn.tv_nsec);
-				double throughput = recved / diff * 8 / 1.073741824;
+				// double throughput = recved / diff * 8 / 1.073741824;
+				double throughput = recved / diff * 8;
 				//cout << "["<< (N/REPEAT_N) <<"]["<< recv_num <<"]" << throughput << " Gbps" << endl;
 				cout << "["<< N <<"]time = " << diff << "ns, recv = " << recved << "bits, throughput = " <<
 					throughput << "Gbps" << endl;

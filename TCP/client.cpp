@@ -60,7 +60,8 @@ int main(int argc , char *argv[])
 	    double start_time = tn.tv_sec * 1000000000 + tn.tv_nsec;
 	    double end_time = tn2.tv_sec * 1000000000 + tn2.tv_nsec;
 	    double diff = end_time - start_time;
-	    double throughput = REPEAT_N*BUF_SIZE*sizeof(char)/diff*8/1.024/1.024/1.024;
+	    //double throughput = REPEAT_N*BUF_SIZE*sizeof(char)/diff*8/1.024/1.024/1.024;
+	    double throughput = REPEAT_N*BUF_SIZE*sizeof(char)/diff*8;
 	    //printf("time = %lfns, buf = %dbits, throughput = %lfGbps\n", diff, sizeof(send_buf), throughput);
 	    cout << "time = " << diff << "ns, buf = " << REPEAT_N*BUF_SIZE*sizeof(char) << "bits, throughput = " << throughput << "Gbps" << endl;
     }
