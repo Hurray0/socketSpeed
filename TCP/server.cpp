@@ -8,7 +8,8 @@
 #include <netinet/in.h>
 
 #define SERV_PORT	39407
-#define BUF_SIZE	65000
+#define BUF_SIZE	1000000
+
 
 using namespace std;
 
@@ -34,6 +35,7 @@ int main(int argc , char *argv[])
 	// socket connection
 	struct sockaddr_in serverInfo,clientInfo;
 	int addrlen = sizeof(clientInfo);
+	int recv_num;
 	bzero(&serverInfo,sizeof(serverInfo));
 
 	serverInfo.sin_family = PF_INET;
@@ -44,17 +46,24 @@ int main(int argc , char *argv[])
 
 	forClientSockfd = accept(sockfd,(struct sockaddr*) &clientInfo, (socklen_t *) &addrlen);
 	clock_gettime(CLOCK_REALTIME, &tn);
+	int recved = 0;
+	int needRecv = BUF_SIZE * sizeof(char) * REPEAT_N;
 	while(1){
-		recv(forClientSockfd, recv_buf, sizeof(recv_buf), 0);
+		recv_num = recv(forClientSockfd, recv_buf, BUF_SIZE*sizeof(char), 0);
 		//send(forClientSockfd,message,sizeof(message),0);
-		++N;
-		if (N % REPEAT_N == 0)
-		{
-			clock_gettime(CLOCK_REALTIME, &tn2);
-			double diff = tn2.tv_sec * 1000000000 + tn2.tv_nsec - (tn.tv_sec * 1000000000 + tn.tv_nsec);
-			double throughput = REPEAT_N * BUF_SIZE * sizeof(char) / diff * 8 / 1.073741824;
-			cerr << throughput << endl;
-			tn = tn2;
+		if (recv_num > 0) {
+			recved += recv_num;
+			if (recved >= needRecv) {
+				N ++;
+				clock_gettime(CLOCK_REALTIME, &tn2);
+				double diff = tn2.tv_sec * 1000000000 + tn2.tv_nsec - (tn.tv_sec * 1000000000 + tn.tv_nsec);
+				double throughput = recved / diff * 8 / 1.073741824;
+				//cout << "["<< (N/REPEAT_N) <<"]["<< recv_num <<"]" << throughput << " Gbps" << endl;
+				cout << "["<< N <<"]time = " << diff << "ns, recv = " << recved << "bits, throughput = " <<
+					throughput << "Gbps" << endl;
+				tn = tn2;
+				recved = 0;
+			}
 		}
 	}
 	return 0;
