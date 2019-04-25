@@ -20,8 +20,10 @@ int main(int argc , char *argv[])
 	int N = 0;
 
 	// socket setup
-	char inputBuffer[256] = {};
-	char message[] = {"Hi,this is server.\n"};
+	//char inputBuffer[256] = {};
+	//char message[] = {"Hi,this is server.\n"};
+	char* recv_buf;
+	recv_buf = (char*) malloc(BUF_SIZE*sizeof(char));
 	int sockfd = 0,forClientSockfd = 0;
 	sockfd = socket(AF_INET , SOCK_STREAM , 0);
 
@@ -43,7 +45,7 @@ int main(int argc , char *argv[])
 	forClientSockfd = accept(sockfd,(struct sockaddr*) &clientInfo, (socklen_t *) &addrlen);
 	clock_gettime(CLOCK_REALTIME, &tn);
 	while(1){
-		recv(forClientSockfd,inputBuffer,sizeof(inputBuffer),0);
+		recv(forClientSockfd, recv_buf, sizeof(recv_buf), 0);
 		//send(forClientSockfd,message,sizeof(message),0);
 		++N;
 		if (N % REPEAT_N == 0)
